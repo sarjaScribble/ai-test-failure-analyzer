@@ -1,5 +1,5 @@
 const Report = require(
-  "../model/Report"
+  "../models/Report"
 );
 
 exports.uploadReport = async (
