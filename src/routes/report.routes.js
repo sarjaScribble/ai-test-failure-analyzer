@@ -1,6 +1,4 @@
-const express = require(
-  "express"
-);
+const express = require("express");
 
 const router =
   express.Router();
@@ -14,13 +12,9 @@ const upload = require(
 );
 
 const {
-  uploadReport
-} = require(
-  "../controllers/report.controller"
-);
-
-const {
-  getReports
+  uploadReport,
+  getReports,
+  getFailures
 } = require(
   "../controllers/report.controller"
 );
@@ -36,6 +30,12 @@ router.get(
   "/",
   authMiddleware,
   getReports
+);
+
+router.get(
+  "/:reportId/failures",
+  authMiddleware,
+  getFailures
 );
 
 module.exports = router;

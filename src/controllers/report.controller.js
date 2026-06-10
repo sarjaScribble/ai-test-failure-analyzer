@@ -1,6 +1,9 @@
-const Report = require(
-  "../models/Report"
+const Report = require("../models/Report");
+const Failure = require("../models/Failure");
+const ReportParserService = require(
+  "../../services/reportParser.service"
 );
+const { default: mongoose } = require("mongoose");
 
 exports.uploadReport = async (
   req,
@@ -12,36 +15,46 @@ exports.uploadReport = async (
       projectName
     } = req.body;
 
-    console.log(req.body);
-    
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message:
-          "Report file is required"
+        message: "Report file is required"
       });
     }
 
-    const report =
-      await Report.create({
-        buildId,
-        projectName,
+    const report = await Report.create({
+      buildId,
+      projectName,
+      fileName: req.file.originalname,
+      filePath: req.file.path,
+      fileType: req.file.mimetype,
+      uploadedBy: req.user.id
+    });
 
-        fileName:
-          req.file.originalname,
+    const failures =
+      await ReportParserService.parseJUnitReport(
+        req.file.path
+      );
 
-        filePath: req.file.path,
-
-        fileType: req.file.mimetype,
-
-        uploadedBy: req.user.id
-      });
+    if (failures.length > 0) {
+      await Failure.insertMany(
+        failures.map((failure) => ({
+          ...failure,
+          buildId,
+          reportId: report._id
+        }))
+      );
+    }
 
     res.status(201).json({
       success: true,
       message:
-        "Report uploaded successfully",
-      data: report
+        "Report uploaded and parsed successfully",
+      data: {
+        reportId: report._id,
+        failuresFound:
+          failures.length
+      }
     });
   } catch (error) {
     console.error(error);
@@ -49,7 +62,7 @@ exports.uploadReport = async (
     res.status(500).json({
       success: false,
       message:
-        "Failed to upload report"
+        "Failed to process report"
     });
   }
 };
@@ -72,4 +85,35 @@ exports.getReports = async (
     success: true,
     data: reports
   });
+
+}
+
+exports.getFailures = async (
+  req,
+  res
+) => {
+  try {
+    console.log(req.params.reportId);
+    
+    const failures =
+      await Failure.find({
+        reportId:
+          req.params.reportId
+      });
+
+      console.log(failures);
+      
+    res.status(200).json({
+      success: true,
+      data: failures
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Failed to fetch failures"
+    });
+  }
 };
