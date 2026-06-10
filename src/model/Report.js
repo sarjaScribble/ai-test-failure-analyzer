@@ -12,16 +12,34 @@ const reportSchema = new mongoose.Schema(
       required: true
     },
 
-    uploadedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+    fileName: {
+      type: String,
+      required: true
     },
 
-    filePath: String,
+    filePath: {
+      type: String,
+      required: true
+    },
+
+    fileType: {
+      type: String
+    },
+
+    uploadedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
 
     status: {
       type: String,
-      enum: ["UPLOADED", "PROCESSING", "ANALYZED"],
+      enum: [
+        "UPLOADED",
+        "PROCESSING",
+        "ANALYZED",
+        "FAILED"
+      ],
       default: "UPLOADED"
     }
   },
@@ -30,4 +48,7 @@ const reportSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Report", reportSchema);
+module.exports = mongoose.model(
+  "Report",
+  reportSchema
+);
