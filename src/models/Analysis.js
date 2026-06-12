@@ -1,40 +1,42 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const analysisSchema = new mongoose.Schema(
   {
     failureId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Failure",
-      required: true
+      required: true,
     },
 
     rootCause: {
       type: String,
-      required: true
+      required: true,
     },
 
     suggestedFix: {
       type: String,
-      required: true
+      required: true,
     },
 
     confidenceScore: {
       type: Number,
       min: 0,
-      max: 100
+      max: 100,
     },
 
     model: {
       type: String,
-      default: "gpt-4o-mini"
-    }
+      default: "gpt-4o-mini",
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model(
+const Analysis = mongoose.model(
   "Analysis",
   analysisSchema
 );
+
+export default Analysis;

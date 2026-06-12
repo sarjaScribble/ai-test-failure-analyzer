@@ -1,11 +1,12 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-module.exports = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+const protect = (req, res, next) => {
+  const token =
+    req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({
-      message: "Unauthorized"
+      message: "Unauthorized",
     });
   }
 
@@ -16,9 +17,11 @@ module.exports = (req, res, next) => {
     );
 
     next();
-  } catch {
+  } catch (error) {
     res.status(401).json({
-      message: "Invalid Token"
+      message: "Invalid Token",
     });
   }
 };
+
+export default protect;

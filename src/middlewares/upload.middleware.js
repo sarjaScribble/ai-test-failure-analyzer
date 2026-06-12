@@ -1,5 +1,5 @@
-const multer = require("multer");
-const path = require("path");
+import multer from "multer";
+import path from "path";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -8,12 +8,10 @@ const storage = multer.diskStorage({
 
   filename: (req, file, cb) => {
     const uniqueName =
-      Date.now() +
-      "-" +
-      file.originalname;
+      `${Date.now()}-${file.originalname}`;
 
     cb(null, uniqueName);
-  }
+  },
 });
 
 const fileFilter = (
@@ -23,7 +21,7 @@ const fileFilter = (
 ) => {
   const allowedTypes = [
     ".xml",
-    ".json"
+    ".json",
   ];
 
   const ext = path.extname(
@@ -41,9 +39,9 @@ const fileFilter = (
   }
 };
 
-console.log(fileFilter);
-
-module.exports = multer({
+const upload = multer({
   storage,
-  fileFilter
+  fileFilter,
 });
+
+export default upload;

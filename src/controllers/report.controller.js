@@ -1,24 +1,22 @@
-const Report = require("../models/Report");
-const Failure = require("../models/Failure");
-const ReportParserService = require(
-  "../../services/reportParser.service"
-);
-const { default: mongoose } = require("mongoose");
+import Report from "../models/Report.js";
+import Failure from "../models/Failure.js";
+import ReportParserService from "../../services/reportParser.service.js";
+import mongoose from "mongoose";
 
-exports.uploadReport = async (
+export const uploadReport = async (
   req,
   res
 ) => {
   try {
     const {
       buildId,
-      projectName
+      projectName,
     } = req.body;
 
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Report file is required"
+        message: "Report file is required",
       });
     }
 
@@ -28,7 +26,7 @@ exports.uploadReport = async (
       fileName: req.file.originalname,
       filePath: req.file.path,
       fileType: req.file.mimetype,
-      uploadedBy: req.user.id
+      uploadedBy: req.user.id,
     });
 
     const failures =
@@ -41,7 +39,7 @@ exports.uploadReport = async (
         failures.map((failure) => ({
           ...failure,
           buildId,
-          reportId: report._id
+          reportId: report._id,
         }))
       );
     }
@@ -53,8 +51,8 @@ exports.uploadReport = async (
       data: {
         reportId: report._id,
         failuresFound:
-          failures.length
-      }
+          failures.length,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -62,50 +60,29 @@ exports.uploadReport = async (
     res.status(500).json({
       success: false,
       message:
-        "Failed to process report"
+        "Failed to process report",
     });
   }
 };
 
-exports.getReports = async (
-  req,
-  res
-) => {
-  const reports =
-    await Report.find()
-      .populate(
-        "uploadedBy",
-        "name email"
-      )
-      .sort({
-        createdAt: -1
-      });
-
-  res.json({
-    success: true,
-    data: reports
-  });
-
-}
-
-exports.getFailures = async (
+export const getReports = async (
   req,
   res
 ) => {
   try {
-    console.log(req.params.reportId);
-    
-    const failures =
-      await Failure.find({
-        reportId:
-          req.params.reportId
-      });
+    const reports =
+      await Report.find()
+        .populate(
+          "uploadedBy",
+          "name email"
+        )
+        .sort({
+          createdAt: -1,
+        });
 
-      console.log(failures);
-      
     res.status(200).json({
       success: true,
-      data: failures
+      data: reports,
     });
   } catch (error) {
     console.error(error);
@@ -113,7 +90,39 @@ exports.getFailures = async (
     res.status(500).json({
       success: false,
       message:
-        "Failed to fetch failures"
+        "Failed to fetch reports",
+    });
+  }
+};
+
+export const getFailures = async (
+  req,
+  res
+) => {
+  try {
+    console.log(
+      req.params.reportId
+    );
+
+    const failures =
+      await Failure.find({
+        reportId:
+          req.params.reportId,
+      });
+
+    console.log(failures);
+
+    res.status(200).json({
+      success: true,
+      data: failures,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Failed to fetch failures",
     });
   }
 };

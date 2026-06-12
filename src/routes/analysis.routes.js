@@ -1,19 +1,12 @@
-const express = require(
-  "express"
-);
+import express from "express";
 
-const router =
-  express.Router();
+import authMiddleware from "../middlewares/auth.middleware.js";
 
-const authMiddleware = require(
-  "../middlewares/auth.middleware"
-);
+import {
+  generateAnalysis,
+} from "../controllers/analysis.controller.js";
 
-const {
-  generateAnalysis
-} = require(
-  "../controllers/analysis.controller"
-);
+const router = express.Router();
 
 router.post(
   "/:failureId",
@@ -21,4 +14,4 @@ router.post(
   generateAnalysis
 );
 
-module.exports = router;
+export default router;

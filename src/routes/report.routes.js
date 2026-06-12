@@ -1,23 +1,15 @@
-const express = require("express");
+import { Router } from "express";
 
-const router =
-  express.Router();
+import authMiddleware from "../middlewares/auth.middleware.js";
+import upload from "../middlewares/upload.middleware.js";
 
-const authMiddleware = require(
-  "../middlewares/auth.middleware"
-);
-
-const upload = require(
-  "../middlewares/upload.middleware"
-);
-
-const {
+import {
   uploadReport,
   getReports,
-  getFailures
-} = require(
-  "../controllers/report.controller"
-);
+  getFailures,
+} from "../controllers/report.controller.js";
+
+const router = Router();
 
 router.post(
   "/upload",
@@ -38,4 +30,4 @@ router.get(
   getFailures
 );
 
-module.exports = router;
+export default router;

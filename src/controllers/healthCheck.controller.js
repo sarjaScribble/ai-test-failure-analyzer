@@ -1,6 +1,6 @@
-
-exports.health = async (req, res) => {
-  const report = "Healthy"
-
-  res.status(201).json(report);
+export const health = async (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "Healthy",
+  });
 };

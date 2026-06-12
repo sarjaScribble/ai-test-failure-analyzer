@@ -1,35 +1,35 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema(
   {
     buildId: {
       type: String,
-      required: true
+      required: true,
     },
 
     projectName: {
       type: String,
-      required: true
+      required: true,
     },
 
     fileName: {
       type: String,
-      required: true
+      required: true,
     },
 
     filePath: {
       type: String,
-      required: true
+      required: true,
     },
 
     fileType: {
-      type: String
+      type: String,
     },
 
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
 
     status: {
@@ -38,17 +38,19 @@ const reportSchema = new mongoose.Schema(
         "UPLOADED",
         "PROCESSING",
         "ANALYZED",
-        "FAILED"
+        "FAILED",
       ],
-      default: "UPLOADED"
-    }
+      default: "UPLOADED",
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model(
+const Report = mongoose.model(
   "Report",
   reportSchema
 );
+
+export default Report;

@@ -1,30 +1,17 @@
-const Failure = require(
-  "../models/Failure"
-);
+import Failure from "../models/Failure.js";
+import Analysis from "../models/Analysis.js";
+import AIService from "../../services/ai.service.js";
 
-const Analysis = require(
-  "../models/Analysis"
-);
-
-const AIService = require(
-  "../../services/ai.service"
-);
-
-exports.generateAnalysis =
-  async (req, res) => {
-
+export const generateAnalysis = async (req, res) => {
   try {
-
-    const failure =
-      await Failure.findById(
-        req.params.failureId
-      );
+    const failure = await Failure.findById(
+      req.params.failureId
+    );
 
     if (!failure) {
       return res.status(404).json({
         success: false,
-        message:
-          "Failure not found"
+        message: "Failure not found",
       });
     }
 
@@ -35,24 +22,17 @@ exports.generateAnalysis =
 
     const analysis =
       await Analysis.create({
-        failureId:
-          failure._id,
-
-        rootCause:
-          result.rootCause,
-
-        suggestedFix:
-          result.suggestedFix,
-
+        failureId: failure._id,
+        rootCause: result.rootCause,
+        suggestedFix: result.suggestedFix,
         confidenceScore:
-          result.confidenceScore
+          result.confidenceScore,
       });
 
     res.status(201).json({
       success: true,
-      data: analysis
+      data: analysis,
     });
-
   } catch (error) {
     console.error(error);
 
@@ -60,13 +40,14 @@ exports.generateAnalysis =
       return res.status(429).json({
         success: false,
         message:
-          "AI quota exceeded. Please check OpenAI billing."
+          "AI quota exceeded. Please check OpenAI billing.",
       });
     }
 
     res.status(500).json({
       success: false,
-      message: "Analysis generation failed"
+      message:
+        "Analysis generation failed",
     });
   }
 };

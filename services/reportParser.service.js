@@ -1,8 +1,7 @@
-const fs = require("fs/promises");
-const xml2js = require("xml2js");
+import fs from "fs/promises";
+import xml2js from "xml2js";
 
 class ReportParserService {
-
   async parseJUnitReport(filePath) {
     const xmlContent =
       await fs.readFile(
@@ -24,7 +23,6 @@ class ReportParserService {
   }
 
   extractFailures(parsedXml) {
-
     const failures = [];
 
     const testSuites =
@@ -34,17 +32,14 @@ class ReportParserService {
             ?.testsuite || [];
 
     for (const suite of testSuites) {
-
       const testCases =
         suite.testcase || [];
 
       for (const testCase of testCases) {
-
         if (
           testCase.failure &&
           testCase.failure.length > 0
         ) {
-
           failures.push({
             testName:
               testCase.$.name,
@@ -58,7 +53,7 @@ class ReportParserService {
 
             stackTrace:
               testCase.failure[0]._ ||
-              ""
+              "",
           });
         }
       }
@@ -68,5 +63,4 @@ class ReportParserService {
   }
 }
 
-module.exports =
-  new ReportParserService();
+export default new ReportParserService();

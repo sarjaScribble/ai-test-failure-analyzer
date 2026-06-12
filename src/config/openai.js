@@ -1,5 +1,6 @@
-const OpenAI = require("openai");
+import OpenAI from "openai";
 
-module.exports = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
+export default openai;

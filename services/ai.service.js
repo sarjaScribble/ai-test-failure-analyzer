@@ -1,13 +1,9 @@
-const openai = require(
-  "../src/config/openai"
-);
+import openai from "../src/config/openai.js";
 
 class AIService {
-
   async analyzeFailure(
     failure
   ) {
-
     const prompt = `
 Analyze the following automated test failure.
 
@@ -36,13 +32,13 @@ Return JSON in this format:
         messages: [
           {
             role: "user",
-            content: prompt
-          }
+            content: prompt,
+          },
         ],
 
         response_format: {
-          type: "json_object"
-        }
+          type: "json_object",
+        },
       });
 
     return JSON.parse(
@@ -51,5 +47,4 @@ Return JSON in this format:
   }
 }
 
-module.exports =
-  new AIService();
+export default new AIService();

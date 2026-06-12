@@ -1,31 +1,31 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 const generateToken = (userId) => {
   return jwt.sign(
     {
-      id: userId
+      id: userId,
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "7d"
+      expiresIn: "7d",
     }
   );
 };
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({
-      email
+      email,
     });
 
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: "User already exists"
+        message: "User already exists",
       });
     }
 
@@ -37,7 +37,7 @@ exports.register = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     const token = generateToken(user._id);
@@ -49,31 +49,31 @@ exports.register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        token
-      }
+        token,
+      },
     });
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       success: false,
-      message: "Internal Server Error"
+      message: "Internal Server Error",
     });
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({
-      email
+      email,
     });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password"
+        message: "Invalid email or password",
       });
     }
 
@@ -86,7 +86,7 @@ exports.login = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password"
+        message: "Invalid email or password",
       });
     }
 
@@ -99,15 +99,15 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        token
-      }
+        token,
+      },
     });
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       success: false,
-      message: "Internal Server Error"
+      message: "Internal Server Error",
     });
   }
 };
