@@ -54,13 +54,19 @@ exports.generateAnalysis =
     });
 
   } catch (error) {
-
     console.error(error);
+
+    if (error.status === 429) {
+      return res.status(429).json({
+        success: false,
+        message:
+          "AI quota exceeded. Please check OpenAI billing."
+      });
+    }
 
     res.status(500).json({
       success: false,
-      message:
-        "Analysis generation failed"
+      message: "Analysis generation failed"
     });
   }
 };
